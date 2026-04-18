@@ -1,0 +1,222 @@
+body {
+    margin: 0;
+    font-family: "Microsoft YaHei", sans-serif;
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.app {
+    width: 90%;
+    max-width: 600px;
+    margin: 60px auto;
+    background: white;
+    padding: 24px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.input-area {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+button {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9fafb;
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.delete-btn {
+    background: #ef4444;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+}
+.completed {
+    text-decoration: line-through;
+    color: #9ca3af;
+}
+
+.complete-btn {
+    background: #10b981;
+    padding: 8px 12px;
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.complete-btn:hover {
+    background: #059669;
+}
+.filter-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: #e5e7eb;
+    color: #111827;
+    padding: 8px 14px;
+    font-size: 14px;
+}
+
+.filter-btn:hover {
+    background: #d1d5db;
+}
+
+.filter-btn.active {
+    background: #2563eb;
+    color: white;
+}
+
+.button-group {
+    display: flex;
+    gap: 8px;
+}
+
+.empty-item {
+    justify-content: center;
+    color: #6b7280;
+}
+.edit-btn {
+    background: #f59e0b;
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.edit-btn:hover {
+    background: #d97706;
+}
+.stats-area {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 12px 14px;
+    background: #eff6ff;
+    border-radius: 12px;
+    color: #1e3a8a;
+    font-size: 14px;
+}
+
+.stats-area strong {
+    font-size: 16px;
+}
+.input-area {
+    flex-wrap: wrap;
+}
+
+#dateInput {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    font-size: 16px;
+    background: white;
+    color: #1f2937;
+}
+
+.task-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.task-date {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.task-date.overdue {
+    color: #dc2626;
+    font-weight: 700;
+}
+.sort-area {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.sort-btn {
+    background: #fde68a;
+    color: #92400e;
+    padding: 8px 14px;
+    font-size: 14px;
+}
+
+.sort-btn:hover {
+    background: #fcd34d;
+}
+
+.sort-btn.active {
+    background: #f59e0b;
+    color: white;
+}
+.action-area {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.clear-btn {
+    background: #7c3aed;
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+.clear-btn:hover {
+    background: #6d28d9;
+}
+
+.export-btn {
+    background: #0ea5e9;
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+.export-btn:hover {
+    background: #0284c7;
+}

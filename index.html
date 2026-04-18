@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>待办清单</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <h1>我的待办清单</h1>
+
+<div class="input-area">
+      <input id="taskInput" type="text" placeholder="请输入任务内容">
+      <input id="dateInput" type="date">
+      <button id="addBtn">添加任务</button>
+</div>
+
+
+        <div class="filter-area">
+               <button class="filter-btn active" data-filter="all">全部</button>
+               <button class="filter-btn" data-filter="active">未完成</button>
+               <button class="filter-btn" data-filter="completed">已完成</button>
+         </div>
+
+<div class="action-area">
+      <button id="clearCompletedBtn" class="clear-btn">清空已完成任务</button>
+      <button id="exportBtn" class="export-btn">导出任务清单</button>
+</div>
+
+
+<div class="stats-area">
+    <span>总任务：<strong id="totalCount">0</strong></span>
+    <span>已完成：<strong id="completedCount">0</strong></span>
+    <span>未完成：<strong id="activeCount">0</strong></span>
+</div>
+
+<div class="sort-area">
+    <button class="sort-btn active" data-sort="default">默认顺序</button>
+    <button class="sort-btn" data-sort="dueDate">按截止日期排序</button>
+</div>
+
+        <ul id="taskList"></ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
