@@ -3,104 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus Board | 我的待办清单</title>
+    <title>North Task | 待办清单</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="background-orb orb-one"></div>
-    <div class="background-orb orb-two"></div>
+    <div class="page-glow glow-left"></div>
+    <div class="page-glow glow-right"></div>
 
-    <main class="app-shell">
-        <section class="hero-panel">
-            <div class="hero-copy">
-                <p class="eyebrow">Focus Board</p>
-                <h1>我的待办清单</h1>
-                <p class="subtitle">
-                    把要做的事、截止日期和完成状态清楚整理起来。
-                    这是一个真正能用、也更像正式产品的小工具。
+    <main class="layout">
+        <section class="brand-panel">
+            <div class="brand-top">
+                <div class="brand-logo">
+                    <span class="logo-mark">N</span>
+                    <div>
+                        <p class="brand-name">North Task</p>
+                        <p class="brand-sub">Simple Focus System</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="brand-content">
+                <p class="eyebrow">Welcome Back</p>
+                <h1>让任务管理变得更清楚、更轻、更专注。</h1>
+                <p class="lead">
+                    这是一个你自己做出来的真正可用的小产品。
+                    它支持添加、编辑、筛选、排序、导出和本地保存。
                 </p>
-            </div>
 
-            <div class="hero-card">
-                <span class="hero-card-label">当前保存方式</span>
-                <strong>浏览器本地保存</strong>
-                <p>刷新页面后，任务依然会保留。</p>
+                <div class="feature-list">
+                    <div class="feature-card">
+                        <strong>本地保存</strong>
+                        <span>刷新页面后，任务依然保留。</span>
+                    </div>
+                    <div class="feature-card">
+                        <strong>截止日期</strong>
+                        <span>更快看到快到期和已过期任务。</span>
+                    </div>
+                    <div class="feature-card">
+                        <strong>导出清单</strong>
+                        <span>一键下载成文本文件，方便备份。</span>
+                    </div>
+                </div>
+
+                <div class="welcome-note">
+                    <p class="note-label">Today</p>
+                    <p class="note-text">
+                        先添加一条最重要的任务，然后完成它。
+                        你的产品感就会一下子出来。
+                    </p>
+                </div>
             </div>
         </section>
 
-        <section class="panel composer-panel">
-            <div class="section-head">
+        <section class="app-panel">
+            <header class="app-header">
                 <div>
-                    <p class="section-tag">Quick Add</p>
-                    <h2>添加新任务</h2>
+                    <p class="app-tag">Workspace</p>
+                    <h2>我的待办清单</h2>
                 </div>
-                <p class="section-note">先写任务内容，再按需要设置截止日期。</p>
-            </div>
+                <div class="mini-badge">Personal Board</div>
+            </header>
 
-            <div class="input-area">
-                <input id="taskInput" type="text" placeholder="例如：完成个人网站的项目介绍">
-                <input id="dateInput" type="date">
-                <button id="addBtn" class="primary-btn">添加任务</button>
-            </div>
-        </section>
-
-        <section class="panel control-panel">
-            <div class="toolbar-block">
-                <span class="toolbar-label">筛选</span>
-                <div class="filter-area">
-                    <button class="filter-btn active" data-filter="all">全部</button>
-                    <button class="filter-btn" data-filter="active">未完成</button>
-                    <button class="filter-btn" data-filter="completed">已完成</button>
+            <section class="composer-card">
+                <div class="section-head">
+                    <div>
+                        <p class="section-tag">Quick Add</p>
+                        <h3>添加新任务</h3>
+                    </div>
+                    <p class="section-note">输入任务内容，并按需要设置日期。</p>
                 </div>
-            </div>
 
-            <div class="toolbar-block">
-                <span class="toolbar-label">排序</span>
-                <div class="sort-area">
-                    <button class="sort-btn active" data-sort="default">默认顺序</button>
-                    <button class="sort-btn" data-sort="dueDate">按截止日期</button>
+                <div class="input-area">
+                    <input id="taskInput" type="text" placeholder="例如：优化待办清单网页视觉">
+                    <input id="dateInput" type="date">
+                    <button id="addBtn" class="primary-btn">添加任务</button>
                 </div>
-            </div>
+            </section>
 
-            <div class="toolbar-block">
-                <span class="toolbar-label">操作</span>
-                <div class="action-area">
-                    <button id="clearCompletedBtn" class="clear-btn">清空已完成</button>
-                    <button id="exportBtn" class="export-btn">导出任务清单</button>
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <span class="stat-label">总任务</span>
+                    <strong id="totalCount" class="stat-value">0</strong>
+                </article>
+                <article class="stat-card">
+                    <span class="stat-label">已完成</span>
+                    <strong id="completedCount" class="stat-value">0</strong>
+                </article>
+                <article class="stat-card">
+                    <span class="stat-label">未完成</span>
+                    <strong id="activeCount" class="stat-value">0</strong>
+                </article>
+            </section>
+
+            <section class="toolbar-card">
+                <div class="toolbar-block">
+                    <span class="toolbar-label">筛选</span>
+                    <div class="filter-area">
+                        <button class="filter-btn active" data-filter="all">全部</button>
+                        <button class="filter-btn" data-filter="active">未完成</button>
+                        <button class="filter-btn" data-filter="completed">已完成</button>
+                    </div>
                 </div>
-            </div>
-        </section>
 
-        <section class="stats-grid">
-            <article class="stat-card">
-                <span class="stat-label">总任务</span>
-                <strong id="totalCount" class="stat-value">0</strong>
-                <p class="stat-note">当前记录的全部任务数量</p>
-            </article>
-
-            <article class="stat-card">
-                <span class="stat-label">已完成</span>
-                <strong id="completedCount" class="stat-value">0</strong>
-                <p class="stat-note">已经完成并可归档的任务</p>
-            </article>
-
-            <article class="stat-card">
-                <span class="stat-label">未完成</span>
-                <strong id="activeCount" class="stat-value">0</strong>
-                <p class="stat-note">还需要继续推进的任务</p>
-            </article>
-        </section>
-
-        <section class="panel list-panel">
-            <div class="section-head">
-                <div>
-                    <p class="section-tag">Task List</p>
-                    <h2>任务列表</h2>
+                <div class="toolbar-block">
+                    <span class="toolbar-label">排序</span>
+                    <div class="sort-area">
+                        <button class="sort-btn active" data-sort="default">默认顺序</button>
+                        <button class="sort-btn" data-sort="dueDate">按截止日期</button>
+                    </div>
                 </div>
-                <p class="section-note">支持完成、编辑、删除、筛选、排序和导出。</p>
-            </div>
 
-            <ul id="taskList" class="task-list"></ul>
+                <div class="toolbar-block">
+                    <span class="toolbar-label">操作</span>
+                    <div class="action-area">
+                        <button id="clearCompletedBtn" class="clear-btn">清空已完成</button>
+                        <button id="exportBtn" class="export-btn">导出清单</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="list-card">
+                <div class="section-head">
+                    <div>
+                        <p class="section-tag">Task List</p>
+                        <h3>任务列表</h3>
+                    </div>
+                    <p class="section-note">支持完成、编辑、删除、筛选、排序和导出。</p>
+                </div>
+
+                <ul id="taskList" class="task-list"></ul>
+            </section>
         </section>
     </main>
 
