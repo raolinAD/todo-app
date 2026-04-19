@@ -1,4 +1,3 @@
-const exportBtn = document.getElementById("exportBtn");
 const taskInput = document.getElementById("taskInput");
 const dateInput = document.getElementById("dateInput");
 const addBtn = document.getElementById("addBtn");
@@ -6,33 +5,62 @@ const taskList = document.getElementById("taskList");
 const filterButtons = document.querySelectorAll(".filter-btn");
 const sortButtons = document.querySelectorAll(".sort-btn");
 const clearCompletedBtn = document.getElementById("clearCompletedBtn");
+const exportBtn = document.getElementById("exportBtn");
 const totalCount = document.getElementById("totalCount");
 const completedCount = document.getElementById("completedCount");
 const activeCount = document.getElementById("activeCount");
 
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
-tasks = tasks.map(function (task) {
-    if (typeof task === "string") {
-        return {
-            text: task,
-            completed: false,
-            dueDate: ""
-        };
-    }
-
-    return {
-        text: task.text || "",
-        completed: task.completed || false,
-        dueDate: task.dueDate || ""
-    };
-});
-
+let tasks = normalizeTasks(JSON.parse(localStorage.getItem("tasks")) || []);
 let currentFilter = "all";
 let currentSort = "default";
 
+function normalizeTasks(rawTasks) {
+    return rawTasks.map(function (task) {
+        if (typeof task === "string") {
+            return {
+                text: task,
+                completed: false,
+                dueDate: ""
+            };
+        }
+
+        return {
+            text: (task.text || "").trim(),
+            completed: Boolean(task.completed),
+            dueDate: task.dueDate || ""
+        };
+    }).filter(function (task) {
+        return task.text !== "";
+    });
+}
+
 function saveTasks() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function getTodayText() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+
+    return year + "-" + month + "-" + day;
+}
+
+function isValidDateText(text) {
+    if (text === "") {
+        return true;
+    }
+
+    return /^\d{4}-\d{2}-\d{2}$/.test(text);
+}
+
+function isOverdue(dueDate) {
+    if (!dueDate) {
+        return false;
+    }
+
+    return dueDate < getTodayText();
 }
 
 function updateStats() {
@@ -40,11 +68,10 @@ function updateStats() {
     const completed = tasks.filter(function (task) {
         return task.completed;
     }).length;
-    const active = total - completed;
 
     totalCount.textContent = total;
     completedCount.textContent = completed;
-    activeCount.textContent = active;
+    activeCount.textContent = total - completed;
 }
 
 function getFilteredTasks() {
@@ -63,8 +90,8 @@ function getFilteredTasks() {
     return tasks;
 }
 
-function getSortedTasks(filteredTasks) {
-    const sortedTasks = [...filteredTasks];
+function getSortedTasks(taskArray) {
+    const sortedTasks = taskArray.slice();
 
     if (currentSort === "dueDate") {
         sortedTasks.sort(function (a, b) {
@@ -115,133 +142,137 @@ function updateSortButtons() {
     });
 }
 
-function getTodayText() {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-
-    return year + "-" + month + "-" + day;
+function renderEmptyState() {
+    const emptyItem = document.createElement("li");
+    emptyItem.className = "empty-item";
+    emptyItem.innerHTML = "<strong>这里还没有符合条件的任务</strong><span>试试添加一条新任务，或者切换筛选条件。</span>";
+    taskList.appendChild(emptyItem);
 }
 
-function isOverdue(dueDate) {
-    if (!dueDate) {
-        return false;
+function createTaskItem(task, originalIndex) {
+    const li = document.createElement("li");
+    const taskMain = document.createElement("div");
+    const taskTopline = document.createElement("div");
+    const title = document.createElement("p");
+    const badge = document.createElement("span");
+    const dateText = document.createElement("span");
+    const buttonGroup = document.createElement("div");
+    const completeBtn = document.createElement("button");
+    const editBtn = document.createElement("button");
+    const deleteBtn = document.createElement("button");
+
+    li.className = "task-item";
+    taskMain.className = "task-main";
+    taskTopline.className = "task-topline";
+    buttonGroup.className = "button-group";
+    title.className = "task-title";
+
+    if (task.completed) {
+        li.classList.add("task-item-completed");
+        title.classList.add("completed");
     }
 
-    return dueDate < getTodayText();
+    title.textContent = task.text;
+
+    badge.className = "task-badge " + (task.completed ? "badge-done" : "badge-open");
+    badge.textContent = task.completed ? "已完成" : "进行中";
+
+    dateText.className = "task-date";
+    dateText.textContent = task.dueDate ? "截止日期 " + task.dueDate : "未设置截止日期";
+
+    if (isOverdue(task.dueDate) && !task.completed) {
+        dateText.classList.add("overdue");
+        dateText.textContent += " · 已过期";
+    }
+
+    completeBtn.className = "complete-btn";
+    completeBtn.textContent = task.completed ? "取消完成" : "完成";
+    completeBtn.addEventListener("click", function () {
+        tasks[originalIndex].completed = !tasks[originalIndex].completed;
+        saveTasks();
+        renderTasks();
+    });
+
+    editBtn.className = "edit-btn";
+    editBtn.textContent = "编辑";
+    editBtn.addEventListener("click", function () {
+        const newText = prompt("请输入新的任务内容：", tasks[originalIndex].text);
+
+        if (newText === null) {
+            return;
+        }
+
+        const trimmedText = newText.trim();
+
+        if (trimmedText === "") {
+            alert("任务内容不能为空。");
+            return;
+        }
+
+        const newDate = prompt(
+            "请输入新的截止日期（格式：2026-04-19，可留空）：",
+            tasks[originalIndex].dueDate
+        );
+
+        if (newDate === null) {
+            tasks[originalIndex].text = trimmedText;
+            saveTasks();
+            renderTasks();
+            return;
+        }
+
+        const trimmedDate = newDate.trim();
+
+        if (!isValidDateText(trimmedDate)) {
+            alert("日期格式不正确，请使用类似 2026-04-19 的格式。");
+            return;
+        }
+
+        tasks[originalIndex].text = trimmedText;
+        tasks[originalIndex].dueDate = trimmedDate;
+        saveTasks();
+        renderTasks();
+    });
+
+    deleteBtn.className = "delete-btn";
+    deleteBtn.textContent = "删除";
+    deleteBtn.addEventListener("click", function () {
+        tasks.splice(originalIndex, 1);
+        saveTasks();
+        renderTasks();
+    });
+
+    taskTopline.appendChild(title);
+    taskTopline.appendChild(badge);
+
+    taskMain.appendChild(taskTopline);
+    taskMain.appendChild(dateText);
+
+    buttonGroup.appendChild(completeBtn);
+    buttonGroup.appendChild(editBtn);
+    buttonGroup.appendChild(deleteBtn);
+
+    li.appendChild(taskMain);
+    li.appendChild(buttonGroup);
+
+    return li;
 }
 
 function renderTasks() {
     taskList.innerHTML = "";
     updateStats();
 
-    const filteredTasks = getFilteredTasks();
-    const displayTasks = getSortedTasks(filteredTasks);
+    const displayTasks = getSortedTasks(getFilteredTasks());
 
     if (displayTasks.length === 0) {
-        const emptyItem = document.createElement("li");
-        emptyItem.textContent = "这个分类下还没有任务。";
-        emptyItem.className = "empty-item";
-        taskList.appendChild(emptyItem);
+        renderEmptyState();
         return;
     }
 
     displayTasks.forEach(function (task) {
         const originalIndex = tasks.indexOf(task);
-
-        const li = document.createElement("li");
-        const taskContent = document.createElement("div");
-        const title = document.createElement("span");
-        const dateText = document.createElement("span");
-        const buttonGroup = document.createElement("div");
-        const completeBtn = document.createElement("button");
-        const editBtn = document.createElement("button");
-        const deleteBtn = document.createElement("button");
-
-        taskContent.className = "task-content";
-
-        title.textContent = task.text;
-
-        if (task.completed) {
-            title.classList.add("completed");
-        }
-
-        if (task.dueDate) {
-            dateText.textContent = "截止日期：" + task.dueDate;
-        } else {
-            dateText.textContent = "截止日期：未设置";
-        }
-
-        dateText.className = "task-date";
-
-        if (isOverdue(task.dueDate) && !task.completed) {
-            dateText.classList.add("overdue");
-            dateText.textContent += "（已过期）";
-        }
-
-        buttonGroup.className = "button-group";
-
-        completeBtn.textContent = task.completed ? "取消完成" : "完成";
-        completeBtn.className = "complete-btn";
-
-        editBtn.textContent = "编辑";
-        editBtn.className = "edit-btn";
-
-        deleteBtn.textContent = "删除";
-        deleteBtn.className = "delete-btn";
-
-        completeBtn.addEventListener("click", function () {
-            tasks[originalIndex].completed = !tasks[originalIndex].completed;
-            saveTasks();
-            renderTasks();
-        });
-
-        editBtn.addEventListener("click", function () {
-            const newText = prompt("请输入新的任务内容：", tasks[originalIndex].text);
-
-            if (newText === null) {
-                return;
-            }
-
-            const trimmedText = newText.trim();
-
-            if (trimmedText === "") {
-                alert("任务内容不能为空。");
-                return;
-            }
-
-            tasks[originalIndex].text = trimmedText;
-
-            const newDate = prompt(
-                "请输入新的截止日期（格式：2026-04-18，可留空）：",
-                tasks[originalIndex].dueDate
-            );
-
-            if (newDate !== null) {
-                tasks[originalIndex].dueDate = newDate.trim();
-            }
-
-            saveTasks();
-            renderTasks();
-        });
-
-        deleteBtn.addEventListener("click", function () {
-            tasks.splice(originalIndex, 1);
-            saveTasks();
-            renderTasks();
-        });
-
-        taskContent.appendChild(title);
-        taskContent.appendChild(dateText);
-
-        buttonGroup.appendChild(completeBtn);
-        buttonGroup.appendChild(editBtn);
-        buttonGroup.appendChild(deleteBtn);
-
-        li.appendChild(taskContent);
-        li.appendChild(buttonGroup);
-        taskList.appendChild(li);
+        const taskItem = createTaskItem(task, originalIndex);
+        taskList.appendChild(taskItem);
     });
 }
 
@@ -250,7 +281,7 @@ function addTask() {
     const dueDate = dateInput.value;
 
     if (taskText === "") {
-        alert("请输入任务内容");
+        alert("请输入任务内容。");
         return;
     }
 
@@ -262,8 +293,10 @@ function addTask() {
 
     saveTasks();
     renderTasks();
+
     taskInput.value = "";
     dateInput.value = "";
+    taskInput.focus();
 }
 
 addBtn.addEventListener("click", addTask);
@@ -291,9 +324,28 @@ sortButtons.forEach(function (button) {
 });
 
 clearCompletedBtn.addEventListener("click", function () {
+    const completedTasks = tasks.filter(function (task) {
+        return task.completed;
+    });
+
+    if (completedTasks.length === 0) {
+        alert("当前没有已完成任务可以清空。");
+        return;
+    }
+
+    const confirmed = confirm("确定要清空所有已完成任务吗？");
+
+    if (!confirmed) {
+        return;
+    }
+
     tasks = tasks.filter(function (task) {
         return !task.completed;
     });
+
+    saveTasks();
+    renderTasks();
+});
 
 exportBtn.addEventListener("click", function () {
     if (tasks.length === 0) {
@@ -310,8 +362,8 @@ exportBtn.addEventListener("click", function () {
     const content = "我的待办清单\n\n" + lines.join("\n");
     const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
-
     const link = document.createElement("a");
+
     link.href = url;
     link.download = "tasks.txt";
     document.body.appendChild(link);
@@ -319,11 +371,6 @@ exportBtn.addEventListener("click", function () {
     document.body.removeChild(link);
 
     URL.revokeObjectURL(url);
-});
-
-
-    saveTasks();
-    renderTasks();
 });
 
 updateFilterButtons();
